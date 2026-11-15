@@ -15,9 +15,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
-/**
- * 纯客户端模组：接管背景音乐，提供播放列表与内置调音。
- */
 @Mod(value = CustomBgm.MODID, dist = Dist.CLIENT)
 public final class CustomBgm {
 
@@ -34,8 +31,9 @@ public final class CustomBgm {
     public CustomBgm(IEventBus modBus, ModContainer container) {
         ConfigManager.get().load();
 
-        container.registerExtensionPoint(IConfigScreenFactory.class,
-                () -> (minecraft, parent) -> new BgmScreen(parent));
+        // Explicitly typed so the compiler picks registerExtensionPoint(Class, T)
+        IConfigScreenFactory configScreen = (minecraft, screen) -> new BgmScreen(screen);
+        container.registerExtensionPoint(IConfigScreenFactory.class, configScreen);
 
         modBus.addListener((RegisterKeyMappingsEvent event) -> event.register(OPEN_GUI));
 
